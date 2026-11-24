@@ -1,0 +1,41 @@
+erDiagram
+    users |o--o{ quiz_attempts : "plays (optional, guests have no user)"
+    users |o--o{ sessions : "is logged in through (optional)"
+
+    numbers {
+        integer id PK
+        integer value UK "1 to 100"
+        varchar kimeru "e.g. mĩrongo ĩrĩ na iyĩrĩ"
+        datetime created_at
+        datetime updated_at
+    }
+
+    quiz_attempts {
+        integer id PK
+        integer user_id FK "nullable, set null on delete"
+        varchar quiz_type "arithmetic"
+        integer score "0 to total"
+        integer total "5"
+        datetime created_at "when the round finished"
+        datetime updated_at
+    }
+
+    users {
+        integer id PK
+        varchar name
+        varchar email UK
+        datetime email_verified_at "nullable"
+        varchar password "hashed"
+        varchar remember_token "nullable"
+        datetime created_at
+        datetime updated_at
+    }
+
+    sessions {
+        varchar id PK "also in the browser cookie"
+        integer user_id "nullable, indexed, not enforced"
+        varchar ip_address "nullable"
+        text user_agent "nullable"
+        text payload "holds the quiz round"
+        integer last_activity "indexed"
+    }
