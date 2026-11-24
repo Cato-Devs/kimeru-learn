@@ -11,10 +11,16 @@ class QuizTest extends TestCase
 {
     use RefreshDatabase;
 
-    // Fill the numbers table before each test.
-    protected bool $seed = true;
+    /**
+     * Runs before every test. Seed the numbers table (1–100) here, inside the test's
+     * transaction, so every test starts with the same data.
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
 
-    protected string $seeder = NumberSeeder::class;
+        $this->seed(NumberSeeder::class);
+    }
 
     /**
      * A round whose first question we know: 22 + 57 = 79, choices 78, 79, 69.

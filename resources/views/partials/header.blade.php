@@ -3,6 +3,7 @@
         'home' => 'Home',
         'numbers' => 'Numbers',
         'quiz' => 'Quiz',
+        'words' => 'Words',
         'about' => 'About Kimeru',
     ];
 @endphp
@@ -30,5 +31,14 @@
                 @endforeach
             </ul>
         </nav>
+
+        {{-- Only editors see this. @auth is true when someone is logged in. --}}
+        @auth
+            <form method="POST" action="{{ route('logout') }}" class="flex items-center gap-3 text-sm">
+                @csrf
+                <span class="text-ink/60">Editor: {{ auth()->user()->name }}</span>
+                <button type="submit" class="font-semibold text-forest underline hover:no-underline">Log out</button>
+            </form>
+        @endauth
     </div>
 </header>

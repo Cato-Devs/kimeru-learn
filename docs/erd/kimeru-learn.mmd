@@ -1,6 +1,7 @@
 erDiagram
     users |o--o{ quiz_attempts : "plays (optional, guests have no user)"
     users |o--o{ sessions : "is logged in through (optional)"
+    categories ||--o{ words : "contains"
 
     numbers {
         integer id PK
@@ -38,4 +39,23 @@ erDiagram
         text user_agent "nullable"
         text payload "holds the quiz round"
         integer last_activity "indexed"
+    }
+
+    categories {
+        integer id PK
+        varchar name "Greetings, Foods"
+        varchar slug UK "used in URLs"
+        varchar description "nullable"
+        datetime created_at
+        datetime updated_at
+    }
+
+    words {
+        integer id PK
+        integer category_id FK "restrict on delete"
+        varchar kimeru "unique within its category"
+        varchar english
+        text notes "nullable"
+        datetime created_at
+        datetime updated_at
     }

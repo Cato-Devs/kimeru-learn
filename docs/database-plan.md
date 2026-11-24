@@ -1,6 +1,6 @@
 # Database plan (draft for Week 5 data dictionary + ERD)
 
-> The finished Week 5 versions are the [data dictionary](data-dictionary.md) and the [ERD](erd/README.md). This plan is kept for the design notes, the planned tables and the seed data.
+> The finished Week 5 versions are the [data dictionary](data-dictionary.md) and the [ERD](erd/README.md). This plan is kept for the design notes and the seed data.
 
 Database: **SQLite** (Laravel default; one file at `database/database.sqlite`).
 
@@ -35,15 +35,16 @@ Migration: `database/migrations/2026_11_24_204911_create_quiz_attempts_table.php
 
 One row is saved per finished quiz round.
 
-### `categories` (planned, for greetings and foods)
+### `categories` ✅ built
 | Column | Type | Notes |
 |---|---|---|
 | id | integer PK | |
 | name | string | e.g. Greetings, Foods |
 | slug | string, unique | e.g. `greetings` (used in URLs) |
+| description | string, nullable | one line shown under the name (added while building) |
 | timestamps | | |
 
-### `words` (planned, for greetings and foods)
+### `words` ✅ built
 | Column | Type | Notes |
 |---|---|---|
 | id | integer PK | |
@@ -57,7 +58,7 @@ Numbers are no longer stored here: they have their own `numbers` table, so the o
 
 ## Relationships
 - One **user** has many **quiz_attempts** (optional: guests have none).
-- One **category** has many **words** (planned).
+- One **category** has many **words**. A Kimeru word is unique within its category.
 - `numbers` stands alone. The quiz keeps its questions in the session, not in the database (see [quiz.md](quiz.md)).
 
 ## Seed data
@@ -76,9 +77,9 @@ Numbers are no longer stored here: they have their own `numbers` table, so the o
 Confirmed with a fluent Kimeru speaker: ☐ (tick once checked; any correction goes in `app/Support/KimeruNumber.php`, then run `php artisan db:seed --class=NumberSeeder`)
 
 ### Greetings (still to be checked)
-Found in a published source (Wikipedia "Meru language" sample phrases):
+Seeded by `WordSeeder`: *Muuga*. Found in a published source (Wikipedia "Meru language" sample phrases):
 - *Muuga*: "How are you"
 - *Mpa rũũji*: "Give me water"
 
 ### Foods
-To be collected by the team from speakers (aim for 8–10 items).
+To be collected by the team from speakers (aim for 8–10 items) and added through the site by an editor.

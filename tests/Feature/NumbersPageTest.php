@@ -11,9 +11,16 @@ class NumbersPageTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected bool $seed = true;
+    /**
+     * Runs before every test. Seed the numbers table (1–100) here, inside the test's
+     * transaction, so every test starts with the same data.
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
 
-    protected string $seeder = NumberSeeder::class;
+        $this->seed(NumberSeeder::class);
+    }
 
     public function test_the_seeder_stores_1_to_100(): void
     {
