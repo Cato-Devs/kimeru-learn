@@ -1,6 +1,6 @@
 # ICS 3104 — Team Project: Kimeru Learn
 
-> **Team:** _<team name>_ · **Language:** Kimeru (Kĩmĩĩrũ) · **Members:** _<name 1>, <name 2>, <name 3>, <name 4>_
+> **Team:** _<team name>_ · **Language:** Kimeru (Kĩmĩĩrũ) · **Members:** Brian Njehia and Cato Jaloch
 
 Kimeru Learn is a small Laravel web application that helps beginners learn everyday Kimeru: counting from 1 to 10, simple addition with Kimeru numbers, greetings and common foods. It is built step by step across the term for ICS 3104 (Internet Application Programming), and the repository holds everything the project rubric asks for.
 
