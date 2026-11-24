@@ -1,5 +1,7 @@
 # Database plan (draft for Week 5 data dictionary + ERD)
 
+> The finished Week 5 versions are the [data dictionary](data-dictionary.md) and the [ERD](erd/README.md). This plan is kept for the design notes, the planned tables and the seed data.
+
 Database: **SQLite** (Laravel default; one file at `database/database.sqlite`).
 
 ## Tables
