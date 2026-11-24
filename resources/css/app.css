@@ -6,4 +6,11 @@
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+
+    /* Kimeru Learn palette: Mount Kenya forest green, warm ochre earth, cream paper */
+    --color-forest: #1f4d3a;
+    --color-ochre: #c8872b;
+    --color-ochre-dark: #8a5a14;
+    --color-cream: #faf6ef;
+    --color-ink: #1c1917;
 }
