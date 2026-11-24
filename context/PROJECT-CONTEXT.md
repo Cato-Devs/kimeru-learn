@@ -15,8 +15,8 @@
 - Week 13: security checklist
 - Week 14: user-testing findings
 
-**Our app:** Kimeru Learn. Minimum features: about page, word lists by category, a numbers + arithmetic quiz, CRUD for words, saved quiz scores, and login as a stretch goal.
-**Stack:** Laravel 13 (PHP 8.3+), Blade, SQLite, Vite.
+**Our app:** Kimeru Learn. Minimum features: about page, numbers 1–100, an arithmetic quiz (addition and subtraction in Kimeru), word lists by category, CRUD for words, saved quiz scores, and login as a stretch goal. Done so far: home, about, numbers 1–100, the quiz and saving quiz scores.
+**Stack:** Laravel 13 (PHP 8.3+), Blade, SQLite, Vite, Tailwind CSS. Developed on Ubuntu (WSL).
 **Open items:** team name and members; verifying the Kimeru words with a fluent speaker; confirming the course AI-use rule.
 
 Screenshots of the brief and example repo are in this folder.

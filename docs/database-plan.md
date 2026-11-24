@@ -4,61 +4,79 @@ Database: **SQLite** (Laravel default; one file at `database/database.sqlite`).
 
 ## Tables
 
-### `users` (comes with Laravel)
+### `users` (comes with Laravel) ✅ built
 id, name, email, password, timestamps
 
-### `categories`
+### `numbers` ✅ built
+Migration: `database/migrations/2026_11_24_204910_create_numbers_table.php` · Model: `App\Models\Number`
+
 | Column | Type | Notes |
 |---|---|---|
 | id | integer PK | |
-| name | string | e.g. Numbers, Greetings, Foods |
-| slug | string, unique | e.g. `numbers` (used in URLs) |
+| value | unsigned tiny integer, unique | 1–100 |
+| kimeru | string | the Kimeru words, e.g. `mĩrongo ĩrĩ na iyĩrĩ` for 22 |
 | timestamps | | |
 
-### `words`
+Filled by `NumberSeeder`, which builds the words with `App\Support\KimeruNumber`. The rest of the app (the `/numbers` page and the quiz) always reads the words from this table.
+
+### `quiz_attempts` ✅ built
+Migration: `database/migrations/2026_11_24_204911_create_quiz_attempts_table.php` · Model: `App\Models\QuizAttempt`
+
+| Column | Type | Notes |
+|---|---|---|
+| id | integer PK | |
+| user_id | FK → users.id, nullable | null for now because everyone plays as a guest; set to null if the user is deleted |
+| quiz_type | string | `arithmetic` for now (later maybe `vocabulary`) |
+| score | unsigned small integer | questions answered correctly |
+| total | unsigned small integer | questions in the round (5) |
+| timestamps | | `created_at` = when the round was finished |
+
+One row is saved per finished quiz round.
+
+### `categories` (planned, for greetings and foods)
+| Column | Type | Notes |
+|---|---|---|
+| id | integer PK | |
+| name | string | e.g. Greetings, Foods |
+| slug | string, unique | e.g. `greetings` (used in URLs) |
+| timestamps | | |
+
+### `words` (planned, for greetings and foods)
 | Column | Type | Notes |
 |---|---|---|
 | id | integer PK | |
 | category_id | FK → categories.id | |
 | kimeru | string | the Kimeru word or phrase |
 | english | string | meaning |
-| number_value | integer, nullable | only for the Numbers category (1–10); powers the arithmetic quiz |
 | notes | text, nullable | dialect, pronunciation, usage |
 | timestamps | | |
 
-### `quiz_attempts`
-| Column | Type | Notes |
-|---|---|---|
-| id | integer PK | |
-| user_id | FK → users.id, nullable | nullable so guests can play |
-| quiz_type | string | `arithmetic` or `vocabulary` |
-| score | integer | |
-| total | integer | |
-| timestamps | | |
+Numbers are no longer stored here: they have their own `numbers` table, so the old `number_value` column is gone.
 
 ## Relationships
-- One **category** has many **words**.
-- One **user** has many **quiz_attempts**.
+- One **user** has many **quiz_attempts** (optional: guests have none).
+- One **category** has many **words** (planned).
+- `numbers` stands alone. The quiz keeps its questions in the session, not in the database (see [quiz.md](quiz.md)).
 
-## Seed data: ⚠️ DRAFT, must be checked by a fluent Kimeru speaker
+## Seed data
 
-The number words below are a starting draft only. Spelling and the ĩ/ũ marks may be wrong or may differ by dialect (Imenti, Tigania, Igembe…). **Do not seed until verified.**
+### Numbers 1–100 (seeded by `NumberSeeder`)
 
-| Value | Draft Kimeru | Verified? |
-|---|---|---|
-| 1 | ĩmwe | ☐ |
-| 2 | ijĩrĩ | ☐ |
-| 3 | ithatũ | ☐ |
-| 4 | inya | ☐ |
-| 5 | ithano | ☐ |
-| 6 | ithanthatũ | ☐ |
-| 7 | mũgwanja | ☐ |
-| 8 | inyanya | ☐ |
-| 9 | kenda | ☐ |
-| 10 | ikũmi | ☐ |
+| Number | Kimeru |
+|---|---|
+| 1–9 | ĩmwe, iyĩrĩ, ithatũ, inya, ithano, ithanthatũ, mũgwanja, inyanya, kenda |
+| 10 | ĩkũmi |
+| 11–19 | ĩkũmi na + unit, e.g. 12 = *ĩkũmi na iyĩrĩ* |
+| 20, 30 … 90 | mĩrongo ĩrĩ, mĩrongo ĩthatũ, mĩrongo ĩna, mĩrongo ĩthano, mĩrongo ĩthatathũ, mĩrongo mũgwanja, mĩrongo ĩnaana, mĩrongo kenda |
+| 21–99 | tens + na + unit, e.g. 22 = *mĩrongo ĩrĩ na iyĩrĩ*, 57 = *mĩrongo ĩthano na mũgwanja* |
+| 100 | ĩgana |
 
-Greetings found in a published source (Wikipedia "Meru language" sample phrases), still to be checked:
+Confirmed with a fluent Kimeru speaker: ☐ (tick once checked; any correction goes in `app/Support/KimeruNumber.php`, then run `php artisan db:seed --class=NumberSeeder`)
+
+### Greetings (still to be checked)
+Found in a published source (Wikipedia "Meru language" sample phrases):
 - *Muuga*: "How are you"
 - *Mpa rũũji*: "Give me water"
 
-Foods: to be collected by the team from speakers (aim for 8–10 items).
+### Foods
+To be collected by the team from speakers (aim for 8–10 items).

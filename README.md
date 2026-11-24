@@ -2,7 +2,7 @@
 
 > **Team:** _<team name>_ · **Language:** Kimeru (Kĩmĩĩrũ) · **Members:** Brian Njehia and Cato Jaloch
 
-Kimeru Learn is a small Laravel web application that helps beginners learn everyday Kimeru: counting from 1 to 10, simple addition with Kimeru numbers, greetings and common foods. It is built step by step across the term for ICS 3104 (Internet Application Programming), and the repository holds everything the project rubric asks for.
+Kimeru Learn is a small Laravel web application that helps beginners learn everyday Kimeru: counting from 1 to 100, adding and subtracting with Kimeru numbers, greetings and common foods. It is built step by step across the term for ICS 3104 (Internet Application Programming), and the repository holds everything the project rubric asks for.
 
 ---
 
@@ -21,20 +21,21 @@ Kimeru Learn is a small Laravel web application that helps beginners learn every
 
 ## What the site does (minimum viable features)
 
-| # | Feature | Why it's in scope |
-|---|---------|-------------------|
-| 1 | **Home / About Kimeru**: a short intro to the language | Static Blade page with a shared layout |
-| 2 | **Word lists by category** (Numbers, Greetings, Foods) | Read data from the DB (Model → Controller → View) |
-| 3 | **Numbers & arithmetic quiz**: e.g. *ijĩrĩ + ithatũ = ?* and you pick the Kimeru answer | Form handling, validation, simple logic |
-| 4 | **Add / edit a word** (team members only) | Full CRUD, validation, CSRF |
-| 5 | **Save quiz scores** | Write to the DB and show a simple "my scores" page |
-| 6 | *(stretch)* **Login** via a Laravel starter kit | Authentication, needed for the security checklist |
+| # | Feature | Why it's in scope | Status |
+|---|---------|-------------------|--------|
+| 1 | **Home / About Kimeru** (`/`, `/about`): a short intro to the language | Static Blade pages with a shared layout | ✅ Done |
+| 2 | **Numbers 1–100** (`/numbers`): every number with its Kimeru words | Read data from the DB (Model → Controller → View) | ✅ Done |
+| 3 | **Arithmetic quiz** (`/quiz`): 5 addition and subtraction questions written only in Kimeru, e.g. *mĩrongo ĩrĩ na iyĩrĩ + mĩrongo ĩthano na mũgwanja = ?* Pick one of 3 Kimeru answers and see straight away whether you were right. See [docs/quiz.md](docs/quiz.md). | Forms, validation, CSRF, sessions, server-side logic | ✅ Done |
+| 4 | **Save quiz scores**: every finished round is saved in `quiz_attempts` | Write to the DB | ✅ Saving done; a "my scores" page needs login (#7) |
+| 5 | **Word lists by category** (Greetings, Foods) | Read data from the DB | Planned |
+| 6 | **Add / edit a word** (team members only) | Full CRUD, validation, CSRF | Planned |
+| 7 | *(stretch)* **Login** via a Laravel starter kit | Authentication, needed for the security checklist | Planned |
 
 ## Tech stack
 
 - **Laravel 13** (PHP 8.3+), with Blade templates for the views
 - **SQLite**, Laravel's default database (a single file, so no server to install)
-- **Vite + Node/npm** for front-end assets, plus plain CSS
+- **Vite + Node/npm** for front-end assets, styled with **Tailwind CSS** (it comes set up with Laravel 13)
 - **Git + GitHub**, with one branch per feature and a pull request for each
 
 ## Where things live
@@ -53,18 +54,31 @@ Kimeru Learn is a small Laravel web application that helps beginners learn every
 | User-testing findings | `docs/user-testing.md` | Week 14 |
 | AI-assistance disclosure | `AI-DISCLOSURE.md` | ongoing |
 
-## Run it locally (once the Laravel app exists, Week 4+)
+## Run it locally
+
+After cloning (or on a new computer), set it up once:
 
 ```bash
-cp .env.example .env
-composer install
-npm install
-php artisan key:generate
-php artisan migrate --seed
-npm run build
+composer install            # PHP packages → vendor/
+npm install                 # front-end tools → node_modules/
+cp .env.example .env        # local settings
+php artisan key:generate    # secret APP_KEY in .env
+php artisan migrate --seed  # create the tables and add the numbers 1–100
+npm run build               # build the CSS and JS
+```
+
+Then, every time:
+
+```bash
 php artisan serve
 ```
 
-Then open http://127.0.0.1:8000.
+Open http://127.0.0.1:8000. To start the database from scratch, run `php artisan migrate:fresh --seed` (this deletes all local data, including saved quiz scores).
+
+Run the tests with:
+
+```bash
+php artisan test
+```
 
 See `docs/setup-guide.md` for installing the tools and setting up Git.

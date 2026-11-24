@@ -4,10 +4,10 @@ Kimeru is spoken by roughly two million people in Kenya (2019 census figure as r
 
 **Kimeru Learn** addresses a small, achievable part of this gap. It is a simple web application where beginners can:
 
-1. learn the Kimeru numbers 1–10 and practise simple addition with them,
+1. learn the Kimeru numbers 1–100 and practise adding and subtracting with them,
 2. browse short word lists of greetings and common foods, and
 3. take short quizzes and track their scores over time.
 
 **Out of scope (for this term):** full grammar lessons, audio recording, multiple dialects side by side, and mobile apps.
 
-**Success looks like:** a first-time user can learn and correctly use the numbers 1–10 in a quiz within one short session, and team members can add or fix words without touching code.
+**Success looks like:** a first-time user can read Kimeru numbers and answer arithmetic questions written in Kimeru in a quiz within one short session, and team members can add or fix words without touching code.
