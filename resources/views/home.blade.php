@@ -36,54 +36,21 @@
         </ul>
     </section>
 
-    {{-- About the language --}}
+    {{-- About teaser --}}
     <section class="border-t border-forest/10 bg-white">
-        <div class="mx-auto grid max-w-5xl gap-12 px-6 py-16 lg:grid-cols-[1fr_1.4fr]">
-            <div>
+        <div class="mx-auto flex max-w-5xl flex-col gap-6 px-6 py-16 sm:flex-row sm:items-center sm:justify-between">
+            <div class="max-w-2xl">
                 <h2 class="text-2xl font-semibold text-forest">About Kimeru</h2>
-                <p class="mt-4 text-ink/80">
-                    Kimeru (Kĩmĩĩrũ) is a Bantu language spoken by the Ameru people on the eastern and
-                    northern slopes of Mount Kenya and in the Nyambene ranges, mostly in Meru and
-                    Tharaka-Nithi counties. It is closely related to its neighbours Kikuyu and Embu.
+                <p class="mt-3 text-ink/80">
+                    Kimeru (Kĩmĩĩrũ) is a Bantu language spoken by the Ameru people on the slopes of Mount Kenya,
+                    mostly in Meru and Tharaka-Nithi counties. Learn about its dialects, how it is written and
+                    the history behind it.
                 </p>
             </div>
-
-            <dl class="grid gap-6 sm:grid-cols-2">
-                <div>
-                    <dt class="font-semibold">Writing</dt>
-                    <dd class="mt-1 text-sm text-ink/70">
-                        Kimeru uses the Latin alphabet with two extra vowels, <strong>ĩ</strong> and <strong>ũ</strong>.
-                        It doesn't use the letters f, p, q, s, v, x or z.
-                    </dd>
-                </div>
-                <div>
-                    <dt class="font-semibold">Dialects</dt>
-                    <dd class="mt-1 text-sm text-ink/70">
-                        Sub-groups include Igembe, Tigania, Imenti, Igoji, Miutini, Mwimbi, Muthambi, Chuka
-                        and Tharaka. Imenti is usually described as the most widely used.
-                    </dd>
-                </div>
-                <div>
-                    <dt class="font-semibold">Origins</dt>
-                    <dd class="mt-1 text-sm text-ink/70">
-                        Oral tradition tells of <strong>Mbwaa</strong>, a place usually placed near the Kenyan coast,
-                        where the Ameru were held before migrating inland to Mount Kenya.
-                    </dd>
-                </div>
-                <div>
-                    <dt class="font-semibold">Njuri Ncheke</dt>
-                    <dd class="mt-1 text-sm text-ink/70">
-                        The council of elders that traditionally sits at the top of Meru social and judicial life.
-                    </dd>
-                </div>
-            </dl>
-        </div>
-
-        <div class="mx-auto max-w-5xl px-6 pb-16">
-            <p class="rounded-lg border-l-4 border-ochre bg-cream px-4 py-3 text-sm text-ink/80">
-                Not to be confused with the Kimeru spoken by the Rwa (Wameru) people of Mount Meru in Tanzania:
-                same name, different peoples.
-            </p>
+            <a href="{{ route('about') }}"
+               class="inline-flex shrink-0 items-center gap-2 self-start rounded-full bg-forest px-5 py-2.5 text-sm font-medium text-cream hover:bg-forest/90 sm:self-auto">
+                Read about Kimeru <span aria-hidden="true">→</span>
+            </a>
         </div>
     </section>
 @endsection

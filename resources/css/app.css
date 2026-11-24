@@ -13,4 +13,59 @@
     --color-ochre-dark: #8a5a14;
     --color-cream: #faf6ef;
     --color-ink: #1c1917;
+
+    /* Quiz feedback: always paired with ✓ / ✗ text, never colour alone */
+    --color-correct: #1f6f4a;
+    --color-wrong: #b3261e;
+}
+
+@layer base {
+    /* A clear focus ring for keyboard users on every link, button and input */
+    :focus-visible {
+        outline: 3px solid var(--color-ochre);
+        outline-offset: 2px;
+    }
+}
+
+@layer components {
+    /* Kimeru words: bold dark green, and long phrases wrap instead of overflowing */
+    .kimeru {
+        @apply font-bold text-forest;
+        overflow-wrap: break-word;
+    }
+
+    /* The + − = signs between Kimeru words */
+    .sign {
+        @apply mx-1 whitespace-nowrap font-semibold text-ochre-dark;
+    }
+
+    .btn-primary {
+        @apply inline-flex min-h-12 items-center justify-center rounded-full bg-forest px-6 py-3 text-base font-semibold text-cream hover:bg-forest/90;
+    }
+
+    .btn-secondary {
+        @apply inline-flex min-h-12 items-center justify-center rounded-full border-2 border-forest px-6 py-3 text-base font-semibold text-forest hover:bg-forest/5;
+    }
+
+    /* Big, tappable answer cards (a label wrapping a radio button) */
+    .choice-card {
+        @apply flex min-h-16 cursor-pointer items-center gap-4 rounded-xl border-2 border-forest/15 bg-white px-4 py-3 hover:border-forest/40 has-[:checked]:border-forest has-[:checked]:bg-forest/5;
+    }
+
+    .choice-card input[type='radio'] {
+        @apply h-6 w-6 shrink-0 accent-forest;
+    }
+
+    /* After checking: the cards are a plain list, no longer clickable */
+    .choice-card.is-locked {
+        @apply cursor-default opacity-70 hover:border-forest/15;
+    }
+
+    .choice-card.is-right {
+        @apply border-correct bg-correct/10 opacity-100;
+    }
+
+    .choice-card.is-wrong {
+        @apply border-wrong bg-wrong/10 opacity-100;
+    }
 }
