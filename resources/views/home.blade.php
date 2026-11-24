@@ -9,7 +9,7 @@
                 Learn everyday Kimeru, one small step at a time.
             </h1>
             <p class="mt-5 max-w-2xl text-lg text-cream/80">
-                Kimeru Learn helps beginners count from one to ten, practise simple addition,
+                Kimeru Learn helps beginners count from one to a hundred, add and subtract,
                 greet elders and name common foods, all in Kimeru.
             </p>
         </div>
@@ -18,20 +18,36 @@
     {{-- What you'll learn --}}
     <section class="mx-auto max-w-5xl px-6 py-16">
         <h2 class="text-2xl font-semibold text-forest">What you'll learn</h2>
-        <p class="mt-2 text-ink/70">These sections are being built and will appear here soon.</p>
+        <p class="mt-2 text-ink/70">Start with the numbers and the quiz. Greetings and foods are on the way.</p>
 
         <ul class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {{-- A card with a 'route' is ready and links to its page; one without is still coming. --}}
             @foreach ([
-                ['title' => 'Numbers 1–10', 'text' => 'Count from one to ten in Kimeru.'],
-                ['title' => 'Simple addition', 'text' => 'Add Kimeru numbers and pick the right answer.'],
+                ['title' => 'Numbers 1–100', 'text' => 'Count from one to a hundred in Kimeru.', 'route' => 'numbers', 'action' => 'See the numbers'],
+                ['title' => 'Arithmetic quiz', 'text' => 'Add and subtract in Kimeru, then pick the right answer.', 'route' => 'quiz', 'action' => 'Start the quiz'],
                 ['title' => 'Greetings', 'text' => 'Greet family and elders politely.'],
                 ['title' => 'Foods', 'text' => 'Name the foods you eat every day.'],
             ] as $topic)
-                <li class="rounded-xl border border-forest/10 bg-white p-5">
-                    <h3 class="font-semibold">{{ $topic['title'] }}</h3>
-                    <p class="mt-1 text-sm text-ink/70">{{ $topic['text'] }}</p>
-                    <span class="mt-4 inline-block rounded-full bg-ochre/15 px-2.5 py-0.5 text-xs font-medium text-ochre-dark">Coming soon</span>
-                </li>
+                @if (isset($topic['route']))
+                    {{-- The whole card is clickable: the link's ::after covers the card. --}}
+                    <li class="relative flex flex-col rounded-xl border-2 border-forest/20 bg-white p-5 hover:border-forest focus-within:border-forest">
+                        <h3 class="font-semibold">
+                            <a href="{{ route($topic['route']) }}" class="after:absolute after:inset-0 after:rounded-xl">
+                                {{ $topic['title'] }}
+                            </a>
+                        </h3>
+                        <p class="mt-1 text-sm text-ink/70">{{ $topic['text'] }}</p>
+                        <span class="mt-auto pt-4 text-sm font-semibold text-forest" aria-hidden="true">{{ $topic['action'] }} →</span>
+                    </li>
+                @else
+                    <li class="flex flex-col rounded-xl border border-forest/10 bg-white p-5">
+                        <h3 class="font-semibold">{{ $topic['title'] }}</h3>
+                        <p class="mt-1 text-sm text-ink/70">{{ $topic['text'] }}</p>
+                        <span class="mt-auto self-start pt-4">
+                            <span class="inline-block rounded-full bg-ochre/15 px-2.5 py-0.5 text-xs font-medium text-ochre-dark">Coming soon</span>
+                        </span>
+                    </li>
+                @endif
             @endforeach
         </ul>
     </section>
