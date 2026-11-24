@@ -43,6 +43,19 @@
         @apply inline-flex min-h-12 items-center justify-center rounded-full bg-forest px-6 py-3 text-base font-semibold text-cream hover:bg-forest/90;
     }
 
+    /* Form fields (word forms, login) */
+    .field-label {
+        @apply block font-semibold;
+    }
+
+    .field {
+        @apply mt-1 block w-full rounded-lg border-2 border-forest/20 bg-white px-3 py-2.5 text-base aria-invalid:border-wrong;
+    }
+
+    .field-error {
+        @apply mt-1 text-sm font-medium text-wrong;
+    }
+
     .btn-secondary {
         @apply inline-flex min-h-12 items-center justify-center rounded-full border-2 border-forest px-6 py-3 text-base font-semibold text-forest hover:bg-forest/5;
     }
