@@ -1,7 +1,7 @@
 # Data dictionary
 
 **Database:** SQLite, a single file at `database/database.sqlite` (not committed to Git; rebuilt with `php artisan migrate --seed`).
-**Source of truth:** the migrations in `database/migrations/`. This document describes the schema they create, checked against the actual database on 2026-11-25.
+**Source of truth:** the migrations in `database/migrations/`. This document describes the schema they create, checked against the actual database on 2026-11-25 (updated when the word lists were added).
 **Diagram:** see the [ERD](erd/README.md).
 
 ## How to read this document
@@ -15,7 +15,7 @@
 
 The tables fall into three groups:
 
-1. **Application tables:** designed for Kimeru Learn (`numbers`, `quiz_attempts`)
+1. **Application tables:** designed for Kimeru Learn (`numbers`, `quiz_attempts`, `categories`, `words`)
 2. **Laravel tables the app relies on:** `users`, `sessions`, `password_reset_tokens`
 3. **Framework support tables:** created by Laravel and not used directly by our code (`cache`, `cache_locks`, `jobs`, `job_batches`, `failed_jobs`, `migrations`)
 
@@ -65,13 +65,51 @@ One row for every finished quiz round, saved when the learner presses "See my sc
 - `0 ≤ score ≤ total`. The app guarantees this; the database does not check it.
 - Exactly one row per finished round. The controller marks the round as finished before saving, so pressing the button twice cannot save twice.
 
+### `categories`
+
+Groups of words, e.g. Greetings and Foods. Each one has its own page at `/words/{slug}`.
+
+- **Model:** `App\Models\Category` (has many `words`)
+- **Migration:** `2026_11_24_213812_create_categories_table.php`
+- **Filled by:** `WordSeeder` (Greetings and Foods). There is no page for adding categories; new ones are added in the seeder.
+
+| Column | Laravel type | SQLite type | Null? | Key | Description | Example |
+|---|---|---|---|---|---|---|
+| `id` | `id()` | INTEGER | No | PK | Auto-increment row number | `1` |
+| `name` | `string()` | varchar(255) | No | | Name shown on the page | `Greetings` |
+| `slug` | `string()->unique()` | varchar(255) | No | UQ | Short name used in the URL; unique, so each URL points to one category | `greetings` |
+| `description` | `string()->nullable()` | varchar(255) | Yes | | One-line description shown under the name | `Greet family and elders politely.` |
+| `created_at`, `updated_at` | `timestamps()` | datetime | Yes | | When the row was created and last changed | |
+
+### `words`
+
+Kimeru words and phrases, each with its English meaning. Anyone can read them; logged-in editors can add, edit and delete them.
+
+- **Model:** `App\Models\Word` (belongs to one `category`)
+- **Migration:** `2026_11_24_213813_create_words_table.php`
+- **Written by:** `WordController` (store, update, destroy) and `WordSeeder` (the first greeting, *Muuga*)
+
+| Column | Laravel type | SQLite type | Null? | Key | Description | Example |
+|---|---|---|---|---|---|---|
+| `id` | `id()` | INTEGER | No | PK | Auto-increment row number | `1` |
+| `category_id` | `foreignId()->constrained()->restrictOnDelete()` | INTEGER | No | FK → `categories.id` | The category the word is in. Set from the URL, never from the form. A category that still has words can't be deleted | `1` |
+| `kimeru` | `string()` | varchar(255) | No | UQ with `category_id` | The Kimeru word or phrase. Unique within its category (the same word may appear in two categories) | `Muuga` |
+| `english` | `string()` | varchar(255) | No | | English meaning | `How are you?` |
+| `notes` | `text()->nullable()` | TEXT | Yes | | Dialect, pronunciation or source | `Source: Wikipedia sample phrases…` |
+| `created_at`, `updated_at` | `timestamps()` | datetime | Yes | | When the word was added and last edited | |
+
+**Rules** (checked by `WordController` before saving):
+- `kimeru`: required, at most 100 characters, unique within the category (the database also enforces this with a unique index on `category_id` + `kimeru`).
+- `english`: required, at most 150 characters.
+- `notes`: optional, at most 500 characters.
+
 ---
 
 ## 2. Laravel tables the app relies on
 
 ### `users`
 
-Created by Laravel. Not used yet: everyone plays as a guest. It is needed for login (a stretch goal), after which `quiz_attempts.user_id` can be filled in.
+Created by Laravel. **Every user is an editor**: someone who can add, edit and delete words. There is no sign-up page; editors are created with `php artisan editor:create`, and no users are seeded. Learners never log in, so `quiz_attempts.user_id` stays `NULL`.
 
 | Column | Laravel type | SQLite type | Null? | Key | Description |
 |---|---|---|---|---|---|
@@ -80,7 +118,7 @@ Created by Laravel. Not used yet: everyone plays as a guest. It is needed for lo
 | `email` | `string()->unique()` | varchar(255) | No | UQ | Login email; no two users can share one |
 | `email_verified_at` | `timestamp()->nullable()` | datetime | Yes | | When the email was confirmed; `NULL` if not yet |
 | `password` | `string()` | varchar(255) | No | | **Hashed** password (bcrypt), never the plain text |
-| `remember_token` | `rememberToken()` | varchar(100) | Yes | | Token for "remember me" logins |
+| `remember_token` | `rememberToken()` | varchar(100) | Yes | | Token for the "Keep me logged in" checkbox on the login page |
 | `created_at`, `updated_at` | `timestamps()` | datetime | Yes | | When the account was created and last changed |
 
 ### `sessions`
@@ -90,7 +128,7 @@ Laravel stores each visitor's session here, because `.env` has `SESSION_DRIVER=d
 | Column | Laravel type | SQLite type | Null? | Key | Description |
 |---|---|---|---|---|---|
 | `id` | `string()->primary()` | varchar | No | PK | Random session ID, also stored in the visitor's cookie |
-| `user_id` | `foreignId()->nullable()->index()` | INTEGER | Yes | IX | The logged-in user, if any (`NULL` for guests). Indexed but not a database-enforced foreign key |
+| `user_id` | `foreignId()->nullable()->index()` | INTEGER | Yes | IX | The logged-in editor, if any (`NULL` for learners). Indexed but not a database-enforced foreign key |
 | `ip_address` | `string(45)` | varchar(45) | Yes | | Visitor's IP address (45 characters fits IPv6) |
 | `user_agent` | `text()` | TEXT | Yes | | Visitor's browser description |
 | `payload` | `longText()` | TEXT | No | | All session data, serialised and base64-encoded, **including the quiz round** (see below) |
@@ -140,14 +178,3 @@ Laravel creates these, and they are not used directly by Kimeru Learn's code.
 | `jobs` | Background jobs waiting to run (`QUEUE_CONNECTION=database`) | `id`, `queue`, `payload`, `attempts`, `reserved_at`, `available_at`, `created_at` |
 | `job_batches` | Groups of jobs run together | `id`, `name`, `total_jobs`, `pending_jobs`, `failed_jobs`, … |
 | `failed_jobs` | Jobs that crashed, kept for retrying | `id`, `uuid` (UQ), `connection`, `queue`, `payload`, `exception`, `failed_at` |
-
----
-
-## 5. Planned tables
-
-These come with the greetings and foods word lists and are **not built yet**. Their design is in [database-plan.md](database-plan.md).
-
-| Table | Purpose | Relationship |
-|---|---|---|
-| `categories` | Word groups, e.g. Greetings, Foods | One category has many words |
-| `words` | A Kimeru word or phrase with its English meaning | Each word belongs to one category (`words.category_id` → `categories.id`) |
