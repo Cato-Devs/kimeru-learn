@@ -16,6 +16,18 @@
             @endif
         </p>
 
+        @auth
+            <p class="mt-4 text-sm text-ink/70">
+                Saved to <a href="{{ route('my-scores') }}" class="font-semibold text-forest underline hover:no-underline">My scores</a>.
+            </p>
+        @else
+            <p class="mt-4 text-sm text-ink/70">
+                <a href="{{ route('register') }}" class="font-semibold text-forest underline hover:no-underline">Sign up</a>
+                or <a href="{{ route('login') }}" class="font-semibold text-forest underline hover:no-underline">log in</a>
+                to keep your scores next time.
+            </p>
+        @endauth
+
         <ol class="mt-8 space-y-3">
             @foreach ($questions as $q)
                 @php $right = $q['chosen'] === $q['answer']; @endphp

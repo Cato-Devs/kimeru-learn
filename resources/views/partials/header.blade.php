@@ -32,13 +32,24 @@
             </ul>
         </nav>
 
-        {{-- Only editors see this. @auth is true when someone is logged in. --}}
+        {{-- @auth is true when someone is logged in, @guest when nobody is. --}}
         @auth
             <form method="POST" action="{{ route('logout') }}" class="flex items-center gap-3 text-sm">
                 @csrf
-                <span class="text-ink/60">Editor: {{ auth()->user()->name }}</span>
+                <span class="text-ink/60">
+                    {{ auth()->user()->isEditor() ? 'Editor' : 'Learner' }}: {{ auth()->user()->name }}
+                </span>
+                <a href="{{ route('my-scores') }}"
+                   @class(['hover:text-forest', 'font-semibold text-forest' => request()->routeIs('my-scores')])
+                   @if (request()->routeIs('my-scores')) aria-current="page" @endif>My scores</a>
                 <button type="submit" class="font-semibold text-forest underline hover:no-underline">Log out</button>
             </form>
         @endauth
+        @guest
+            <p class="flex items-center gap-3 text-sm">
+                <a href="{{ route('login') }}" class="hover:text-forest">Log in</a>
+                <a href="{{ route('register') }}" class="font-semibold text-forest underline hover:no-underline">Sign up</a>
+            </p>
+        @endguest
     </div>
 </header>

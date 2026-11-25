@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +21,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Only editors may add, edit or delete words. Used by the word routes
+        // (middleware "can:edit-words") and the views (@can('edit-words')).
+        Gate::define('edit-words', fn (User $user) => $user->isEditor());
     }
 }

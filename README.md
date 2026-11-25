@@ -26,10 +26,10 @@ Kimeru Learn is a small Laravel web application that helps beginners learn every
 | 1 | **Home / About Kimeru** (`/`, `/about`): a short intro to the language | Static Blade pages with a shared layout | ✅ Done |
 | 2 | **Numbers 1–100** (`/numbers`): every number with its Kimeru words | Read data from the DB (Model → Controller → View) | ✅ Done |
 | 3 | **Arithmetic quiz** (`/quiz`): 5 addition and subtraction questions written only in Kimeru, e.g. *mĩrongo ĩrĩ na iyĩrĩ + mĩrongo ĩthano na mũgwanja = ?* Pick one of 3 Kimeru answers and see straight away whether you were right. See [docs/quiz.md](docs/quiz.md). | Forms, validation, CSRF, sessions, server-side logic | ✅ Done |
-| 4 | **Save quiz scores**: every finished round is saved in `quiz_attempts` | Write to the DB | ✅ Saving done. A "my scores" page would need learner accounts; only editors log in for now |
+| 4 | **Save quiz scores** and **My scores** (`/my-scores`): every finished round is saved in `quiz_attempts`; logged-in learners see their own rounds, best and average | Write to the DB, one-to-many relationship, per-user data | ✅ Done |
 | 5 | **Word lists by category** (`/words`, `/words/greetings`, `/words/foods`) | Read data from the DB, one-to-many relationship | ✅ Done |
 | 6 | **Add / edit / delete a word** (editors only) | Full CRUD, validation, CSRF, PUT/DELETE forms | ✅ Done |
-| 7 | **Editor login** (`/login`): email and password, built by hand, no public sign-up | Authentication, sessions, password hashing, rate limiting | ✅ Done |
+| 7 | **Sign up and login** (`/register`, `/login`): learners sign up themselves; editors are created from the terminal. Built by hand | Authentication, roles (a Gate), sessions, password hashing, rate limiting | ✅ Done |
 
 ## Tech stack
 
@@ -67,7 +67,7 @@ php artisan migrate --seed  # create the tables and add the numbers 1–100
 npm run build               # build the CSS and JS
 ```
 
-To add or edit words you need an editor account. There is no sign-up page; create one from the terminal (it asks for a name, email and password):
+Learners can sign up on the site at `/register`, but sign-up only makes **learner** accounts (they keep quiz scores; they can't change words). To add or edit words you need an **editor** account, which you create from the terminal (it asks for a name, email and password):
 
 ```bash
 php artisan editor:create
@@ -79,9 +79,9 @@ Then, every time:
 php artisan serve
 ```
 
-Log in at http://127.0.0.1:8000/login (there's also an "Editor login" link in the footer).
+Log in at http://127.0.0.1:8000/login (the **Log in** and **Sign up** links are in the header).
 
-Open http://127.0.0.1:8000. To start the database from scratch, run `php artisan migrate:fresh --seed` (this deletes all local data: saved quiz scores, words added through the site and editor accounts).
+Open http://127.0.0.1:8000. To start the database from scratch, run `php artisan migrate:fresh --seed` (this deletes all local data: saved quiz scores, words added through the site, and every learner and editor account).
 
 Run the tests with:
 

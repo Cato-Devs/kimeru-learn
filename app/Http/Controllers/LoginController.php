@@ -8,8 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 /**
- * Editor login and logout. There is no sign-up page; editors are created
- * with "php artisan editor:create".
+ * Login and logout for everyone with an account. Learners sign up at /register
+ * (RegisterController); editors are created with "php artisan editor:create".
  */
 class LoginController extends Controller
 {
@@ -36,16 +36,20 @@ class LoginController extends Controller
             // Same message whether the email or the password was wrong,
             // so the form doesn't reveal which emails have accounts.
             return back()
-                ->withErrors(['email' => 'Those details don\'t match an editor account.'])
+                ->withErrors(['email' => 'Those details don\'t match an account.'])
                 ->onlyInput('email');
         }
 
         // New session ID after login, so an old (possibly stolen) ID is useless.
         $request->session()->regenerate();
 
-        // Back to the page they were trying to open, or to the word lists.
-        return redirect()->intended(route('words'))
-            ->with('status', 'You are logged in as an editor.');
+        // Back to the page they were trying to open; otherwise editors go to the
+        // word lists and learners to their scores.
+        $user = $request->user();
+
+        return $user->isEditor()
+            ? redirect()->intended(route('words'))->with('status', 'You are logged in as an editor.')
+            : redirect()->intended(route('my-scores'))->with('status', "Welcome back, {$user->name}.");
     }
 
     /**

@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\Validator;
 /**
  * php artisan editor:create
  *
- * There is no public sign-up page: every user is an editor, and editors are
- * created from the terminal by someone who already has access to the server.
+ * The public sign-up page (/register) only makes learners. Editors are
+ * created here, from the terminal, by someone who already has access to the server.
  */
 class CreateEditor extends Command
 {
@@ -43,7 +43,10 @@ class CreateEditor extends Command
         }
 
         // The User model hashes the password automatically (the 'hashed' cast).
-        User::create(['name' => $name, 'email' => $email, 'password' => $password]);
+        // "role" isn't fillable, so it is set on its own before saving.
+        $user = new User(['name' => $name, 'email' => $email, 'password' => $password]);
+        $user->role = User::EDITOR;
+        $user->save();
 
         $this->info("Editor {$email} created. They can now log in at /login.");
 

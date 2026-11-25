@@ -12,12 +12,12 @@ class LoginTest extends TestCase
 
     public function test_the_login_page_loads(): void
     {
-        $this->get('/login')->assertOk()->assertSee('Editor login');
+        $this->get('/login')->assertOk()->assertSee('Log in');
     }
 
     public function test_an_editor_can_log_in_and_out(): void
     {
-        $user = User::factory()->create(['email' => 'editor@example.com', 'password' => 'correct-horse']);
+        $user = User::factory()->editor()->create(['email' => 'editor@example.com', 'password' => 'correct-horse']);
 
         $this->post('/login', ['email' => 'editor@example.com', 'password' => 'correct-horse'])
             ->assertRedirect('/words');
@@ -27,9 +27,18 @@ class LoginTest extends TestCase
         $this->assertGuest();
     }
 
+    public function test_a_learner_goes_to_my_scores_after_logging_in(): void
+    {
+        $user = User::factory()->create(['email' => 'learner@example.com', 'password' => 'correct-horse']);
+
+        $this->post('/login', ['email' => 'learner@example.com', 'password' => 'correct-horse'])
+            ->assertRedirect('/my-scores');
+        $this->assertAuthenticatedAs($user);
+    }
+
     public function test_login_returns_to_the_page_the_editor_wanted(): void
     {
-        User::factory()->create(['email' => 'editor@example.com', 'password' => 'correct-horse']);
+        User::factory()->editor()->create(['email' => 'editor@example.com', 'password' => 'correct-horse']);
 
         $this->get('/words/greetings/create')->assertRedirect('/login');
 
@@ -39,18 +48,18 @@ class LoginTest extends TestCase
 
     public function test_a_wrong_password_is_rejected_without_saying_which_part_was_wrong(): void
     {
-        User::factory()->create(['email' => 'editor@example.com', 'password' => 'correct-horse']);
+        User::factory()->editor()->create(['email' => 'editor@example.com', 'password' => 'correct-horse']);
 
         $this->from('/login')
             ->post('/login', ['email' => 'editor@example.com', 'password' => 'wrong'])
             ->assertRedirect('/login')
-            ->assertSessionHasErrors(['email' => 'Those details don\'t match an editor account.']);
+            ->assertSessionHasErrors(['email' => 'Those details don\'t match an account.']);
 
         // Follow the redirect back to the form: the message is shown, the email is kept.
         $this->from('/login')
             ->followingRedirects()
             ->post('/login', ['email' => 'editor@example.com', 'password' => 'wrong'])
-            ->assertSee('Those details don\'t match an editor account.')
+            ->assertSee('Those details don\'t match an account.')
             ->assertSee('value="editor@example.com"', false)
             ->assertSee('aria-invalid="true"', false);
 
@@ -76,19 +85,26 @@ class LoginTest extends TestCase
         $this->assertStringStartsWith('$2y$', $user->getAttributes()['password']); // bcrypt
     }
 
-    public function test_there_is_no_public_sign_up_page(): void
+    public function test_guests_see_log_in_and_sign_up_links(): void
     {
-        $this->get('/register')->assertNotFound();
+        $this->get('/')
+            ->assertSee('Log in')
+            ->assertSee('Sign up')
+            ->assertDontSee('Log out')
+            ->assertDontSee('My scores');
     }
 
-    public function test_the_editor_login_link_is_only_shown_to_guests(): void
+    public function test_the_header_shows_who_is_logged_in_and_their_role(): void
     {
-        $this->get('/')->assertSee('Editor login');
-
-        $this->actingAs(User::factory()->create(['name' => 'Cato']))
+        $this->actingAs(User::factory()->editor()->create(['name' => 'Cato']))
             ->get('/')
-            ->assertDontSee('Editor login')
             ->assertSee('Editor: Cato')
-            ->assertSee('Log out');
+            ->assertSee('My scores')
+            ->assertSee('Log out')
+            ->assertDontSee('Sign up');
+
+        $this->actingAs(User::factory()->create(['name' => 'Wanja']))
+            ->get('/')
+            ->assertSee('Learner: Wanja');
     }
 }

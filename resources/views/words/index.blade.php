@@ -12,9 +12,9 @@
                 <p class="mt-1 text-ink/70">{{ $category->description }}</p>
             </div>
 
-            @auth
+            @can('edit-words')
                 <a href="{{ route('words.create', $category) }}" class="btn-primary">+ Add a word</a>
-            @endauth
+            @endcan
         </div>
 
         @include('partials.status')
@@ -22,9 +22,9 @@
         @if ($words->isEmpty())
             <p class="mt-8 rounded-xl border border-dashed border-forest/30 bg-white px-5 py-8 text-center text-ink/70">
                 No words here yet.
-                @auth
+                @can('edit-words')
                     Use <strong>Add a word</strong> to add the first one.
-                @endauth
+                @endcan
             </p>
         @else
             <ul class="mt-8 divide-y divide-forest/10 rounded-xl border border-forest/10 bg-white">
@@ -39,7 +39,7 @@
                             @endif
                         </div>
 
-                        @auth
+                        @can('edit-words')
                             <div class="flex shrink-0 items-center gap-3 text-sm">
                                 <a href="{{ route('words.edit', [$category, $word]) }}" class="font-semibold text-forest underline hover:no-underline">
                                     Edit<span class="sr-only"> {{ $word->kimeru }}</span>
@@ -56,7 +56,7 @@
                                     </button>
                                 </form>
                             </div>
-                        @endauth
+                        @endcan
                     </li>
                 @endforeach
             </ul>
