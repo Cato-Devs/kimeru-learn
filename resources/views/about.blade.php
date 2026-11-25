@@ -132,9 +132,6 @@
                 Kimeru Learn is a small step towards closing that gap. It was built as a student project for
                 ICS 3104 Internet Application Programming at Strathmore University.
             </p>
-            <p class="mt-4 max-w-3xl text-sm text-ink/70">
-                We are checking every Kimeru word with fluent speakers before it appears on the site.
-            </p>
         </section>
     </div>
 @endsection

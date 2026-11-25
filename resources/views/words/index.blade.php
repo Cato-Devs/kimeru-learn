@@ -61,7 +61,5 @@
                 @endforeach
             </ul>
         @endif
-
-        <p class="mt-6 text-sm text-ink/60">We are still checking these words with fluent Kimeru speakers.</p>
     </div>
 @endsection
