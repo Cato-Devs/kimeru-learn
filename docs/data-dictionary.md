@@ -1,7 +1,7 @@
 # Data dictionary
 
 **Database:** SQLite, a single file at `database/database.sqlite` (not committed to Git; rebuilt with `php artisan migrate --seed`).
-**Source of truth:** the migrations in `database/migrations/`. This document describes the schema they create, checked against the actual database on 2026-11-25 (updated when the word lists were added).
+**Source of truth:** the migrations in `database/migrations/`. This document describes the schema they create, checked against the actual database on 2026-11-25 (updated when the word lists, and then learner accounts, were added).
 **Diagram:** see the [ERD](erd/README.md).
 
 ## How to read this document
@@ -54,7 +54,7 @@ One row for every finished quiz round, saved when the learner presses "See my sc
 | Column | Laravel type | SQLite type | Null? | Key | Description | Example |
 |---|---|---|---|---|---|---|
 | `id` | `id()` | INTEGER | No | PK | Auto-increment row number | `1` |
-| `user_id` | `foreignId()->nullable()->constrained()->nullOnDelete()` | INTEGER | Yes | FK → `users.id` | Who played. Always `NULL` for now, because everyone plays as a guest. If a user is deleted, their attempts are kept and this becomes `NULL` | `NULL` |
+| `user_id` | `foreignId()->nullable()->constrained()->nullOnDelete()` | INTEGER | Yes | FK → `users.id` | Who played: the logged-in user, or `NULL` for a guest. A user's own rows are what `/my-scores` shows. If a user is deleted, their attempts are kept and this becomes `NULL` | `NULL` |
 | `quiz_type` | `string()` | varchar(255) | No | | Which quiz was played. Currently always `arithmetic` (later maybe `vocabulary`) | `arithmetic` |
 | `score` | `unsignedSmallInteger()` | INTEGER | No | | Questions answered correctly | `3` |
 | `total` | `unsignedSmallInteger()` | INTEGER | No | | Questions in the round. Currently always 5 | `5` |
@@ -109,7 +109,12 @@ Kimeru words and phrases, each with its English meaning. Anyone can read them; l
 
 ### `users`
 
-Created by Laravel. **Every user is an editor**: someone who can add, edit and delete words. There is no sign-up page; editors are created with `php artisan editor:create`, and no users are seeded. Learners never log in, so `quiz_attempts.user_id` stays `NULL`.
+Created by Laravel; the `role` column was added later by `2026_11_25_063310_add_role_to_users_table.php`. There are two kinds of user:
+
+- **Learners** sign up at `/register`. Their finished quiz rounds are saved with their `user_id` and shown on `/my-scores`.
+- **Editors** can also add, edit and delete words. They are created with `php artisan editor:create`; sign-up can never make one, because `role` is not mass-assignable.
+
+No users are seeded. Accounts that existed before the `role` migration became editors, since until then only `editor:create` could make accounts.
 
 | Column | Laravel type | SQLite type | Null? | Key | Description |
 |---|---|---|---|---|---|
@@ -120,6 +125,7 @@ Created by Laravel. **Every user is an editor**: someone who can add, edit and d
 | `password` | `string()` | varchar(255) | No | | **Hashed** password (bcrypt), never the plain text |
 | `remember_token` | `rememberToken()` | varchar(100) | Yes | | Token for the "Keep me logged in" checkbox on the login page |
 | `created_at`, `updated_at` | `timestamps()` | datetime | Yes | | When the account was created and last changed |
+| `role` | `string()->default('learner')` | varchar | No | | `learner` or `editor`. Only editors pass the `edit-words` Gate. SQLite adds new columns at the end, so it comes last |
 
 ### `sessions`
 
@@ -128,7 +134,7 @@ Laravel stores each visitor's session here, because `.env` has `SESSION_DRIVER=d
 | Column | Laravel type | SQLite type | Null? | Key | Description |
 |---|---|---|---|---|---|
 | `id` | `string()->primary()` | varchar | No | PK | Random session ID, also stored in the visitor's cookie |
-| `user_id` | `foreignId()->nullable()->index()` | INTEGER | Yes | IX | The logged-in editor, if any (`NULL` for learners). Indexed but not a database-enforced foreign key |
+| `user_id` | `foreignId()->nullable()->index()` | INTEGER | Yes | IX | The logged-in user, if any (`NULL` for guests). Indexed but not a database-enforced foreign key |
 | `ip_address` | `string(45)` | varchar(45) | Yes | | Visitor's IP address (45 characters fits IPv6) |
 | `user_agent` | `text()` | TEXT | Yes | | Visitor's browser description |
 | `payload` | `longText()` | TEXT | No | | All session data, serialised and base64-encoded, **including the quiz round** (see below) |

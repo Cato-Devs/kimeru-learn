@@ -8,7 +8,7 @@ The diagrams are written in [Mermaid](https://mermaid.js.org/), which GitHub dra
 
 ```mermaid
 erDiagram
-    users |o--o{ quiz_attempts : "plays (optional, guests have no user)"
+    users |o--o{ quiz_attempts : "plays (guests have no user)"
     users |o--o{ sessions : "is logged in through (optional)"
     categories ||--o{ words : "contains"
 
@@ -39,6 +39,7 @@ erDiagram
         varchar remember_token "nullable"
         datetime created_at
         datetime updated_at
+        varchar role "learner or editor"
     }
 
     sessions {
@@ -73,8 +74,8 @@ erDiagram
 ### How to read it
 
 - **`categories ||--o{ words`:** every word belongs to **exactly one** category (`words.category_id` is required), and a category has **zero or more** words (Foods starts empty). A category that still has words can't be deleted. The same Kimeru word can't appear twice in one category.
-- **`users |o--o{ quiz_attempts`:** an attempt belongs to **zero or one** user, and a user has **zero or more** attempts. It is "zero or one" because `quiz_attempts.user_id` can be `NULL`. Only editors have accounts and learners play as guests, so it is always `NULL` for now.
-- **`users |o--o{ sessions`:** a session belongs to a logged-in editor, or to nobody for learners (`NULL`). This link is only indexed, not enforced by a foreign key.
+- **`users |o--o{ quiz_attempts`:** an attempt belongs to **zero or one** user, and a user has **zero or more** attempts. It is "zero or one" because `quiz_attempts.user_id` is `NULL` when a guest plays. Logged-in learners' rounds carry their `user_id`, which is how `/my-scores` finds them.
+- **`users |o--o{ sessions`:** a session belongs to a logged-in learner or editor, or to nobody for guests (`NULL`). This link is only indexed, not enforced by a foreign key.
 - **`numbers` stands alone.** No table points to it with a foreign key. The quiz uses it by *value*: it looks up the Kimeru words for numbers such as 22, 57 and 79 when it shows a question.
 - **The quiz round itself is not a table.** While a round is in progress, its questions and answers live inside `sessions.payload`. Only the final score is written to `quiz_attempts`. See [quiz.md](../quiz.md).
 

@@ -36,7 +36,12 @@ class WordTest extends TestCase
 
     private function editor(): User
     {
-        return User::factory()->create();
+        return User::factory()->editor()->create();
+    }
+
+    private function learner(): User
+    {
+        return User::factory()->create(); // the factory makes learners by default
     }
 
     // ---- Reading (anyone) ----
@@ -85,6 +90,34 @@ class WordTest extends TestCase
 
         $this->assertSame(1, Word::count());
         $this->assertSame('How are you?', $word->fresh()->english);
+    }
+
+    // ---- Learners can't change anything either ----
+
+    public function test_learners_are_refused_every_change(): void
+    {
+        $word = $this->muuga();
+
+        $this->actingAs($this->learner());
+
+        $this->get('/words/greetings/create')->assertForbidden();
+        $this->post('/words/greetings', ['kimeru' => 'Ĩmwe', 'english' => 'One'])->assertForbidden();
+        $this->get("/words/greetings/{$word->id}/edit")->assertForbidden();
+        $this->put("/words/greetings/{$word->id}", ['kimeru' => 'X', 'english' => 'Y'])->assertForbidden();
+        $this->delete("/words/greetings/{$word->id}")->assertForbidden();
+
+        $this->assertSame(1, Word::count());
+        $this->assertSame('How are you?', $word->fresh()->english);
+    }
+
+    public function test_learners_see_no_edit_controls(): void
+    {
+        $this->actingAs($this->learner())
+            ->get('/words/greetings')
+            ->assertOk()
+            ->assertSee('Muuga')
+            ->assertDontSee('Add a word')
+            ->assertDontSee('Delete');
     }
 
     // ---- Editors ----

@@ -128,7 +128,7 @@ class QuizController extends Controller
         $request->session()->put(self::SESSION_KEY, $round);
 
         QuizAttempt::create([
-            'user_id' => null, // guests only for now
+            'user_id' => $request->user()?->id, // null for guests
             'quiz_type' => 'arithmetic',
             'score' => $this->score($round),
             'total' => count($round['questions']),

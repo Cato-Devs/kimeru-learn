@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
-@section('title', 'Editor login')
+@section('title', 'Log in')
 
 @section('content')
     <div class="mx-auto max-w-md px-4 py-8 sm:py-12">
-        <h1 class="text-3xl font-semibold text-forest">Editor login</h1>
-        <p class="mt-2 text-ink/70">For team members who add and edit Kimeru words. Learners don't need an account.</p>
+        <h1 class="text-3xl font-semibold text-forest">Log in</h1>
+        <p class="mt-2 text-ink/70">For learners keeping their quiz scores, and editors who add and edit Kimeru words.</p>
 
         <form method="POST" action="{{ route('login') }}" class="mt-8 space-y-5">
             @csrf
@@ -39,5 +39,9 @@
 
             <button type="submit" class="btn-primary w-full">Log in</button>
         </form>
+
+        <p class="mt-6 text-sm text-ink/70">
+            New here? <a href="{{ route('register') }}" class="font-semibold text-forest underline hover:no-underline">Sign up</a> to keep your quiz scores.
+        </p>
     </div>
 @endsection

@@ -22,6 +22,7 @@ class CreateEditorTest extends TestCase
 
         $user = User::where('email', 'cato@example.com')->firstOrFail();
         $this->assertSame('Cato', $user->name);
+        $this->assertTrue($user->isEditor());
         $this->assertTrue(Hash::check('correct-horse', $user->password));
     }
 

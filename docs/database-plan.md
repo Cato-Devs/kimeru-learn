@@ -7,7 +7,7 @@ Database: **SQLite** (Laravel default; one file at `database/database.sqlite`).
 ## Tables
 
 ### `users` (comes with Laravel) ✅ built
-id, name, email, password, timestamps
+id, name, email, password, timestamps, plus `role` (`learner` or `editor`, default `learner`), added by `2026_11_25_063310_add_role_to_users_table.php`. Learners sign up at `/register`; editors are made with `php artisan editor:create`.
 
 ### `numbers` ✅ built
 Migration: `database/migrations/2026_11_24_204910_create_numbers_table.php` · Model: `App\Models\Number`
@@ -27,7 +27,7 @@ Migration: `database/migrations/2026_11_24_204911_create_quiz_attempts_table.php
 | Column | Type | Notes |
 |---|---|---|
 | id | integer PK | |
-| user_id | FK → users.id, nullable | null for now because everyone plays as a guest; set to null if the user is deleted |
+| user_id | FK → users.id, nullable | the logged-in learner, or null for a guest; set to null if the user is deleted |
 | quiz_type | string | `arithmetic` for now (later maybe `vocabulary`) |
 | score | unsigned small integer | questions answered correctly |
 | total | unsigned small integer | questions in the round (5) |

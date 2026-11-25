@@ -1,6 +1,6 @@
 # The arithmetic quiz
 
-The quiz at `/quiz` helps learners practise reading Kimeru numbers from 1 to 100 by adding and subtracting with them. Anyone can play as a guest; no login is needed.
+The quiz at `/quiz` helps learners practise reading Kimeru numbers from 1 to 100 by adding and subtracting with them. Anyone can play as a guest; no login is needed. Learners who are logged in also get each finished round saved to **My scores** (`/my-scores`).
 
 ## What a round looks like
 

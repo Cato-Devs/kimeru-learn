@@ -15,7 +15,7 @@
 - Week 13: security checklist
 - Week 14: user-testing findings
 
-**Our app:** Kimeru Learn. Minimum features: about page, numbers 1–100, an arithmetic quiz (addition and subtraction in Kimeru), word lists by category, CRUD for words, saved quiz scores, and login. All of these are built; editors log in (hand-built login, no sign-up) and learners use the site as guests.
+**Our app:** Kimeru Learn. Minimum features: about page, numbers 1–100, an arithmetic quiz (addition and subtraction in Kimeru), word lists by category, CRUD for words, saved quiz scores, and login. All of these are built, plus learner sign-up and a My scores page. Learners can sign up (or play as guests); editors are created from the terminal and are the only ones who can change words. Login is hand-built.
 **Stack:** Laravel 13 (PHP 8.3+), Blade, SQLite, Vite, Tailwind CSS. Developed on Ubuntu (WSL).
 **Open items:** team name and members; verifying the Kimeru words with a fluent speaker; confirming the course AI-use rule.
 
