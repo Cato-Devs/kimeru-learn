@@ -24,11 +24,11 @@ class WordSeeder extends Seeder
             ['name' => 'Foods', 'description' => 'Name the foods you eat every day.'],
         );
 
-        // From the Wikipedia "Meru language" sample phrases. Still to be checked
-        // with a fluent speaker. More words are added by editors through the site.
+        // From the Wikipedia "Meru language" sample phrases.
+        // More words are added by editors through the site.
         $greetings->words()->firstOrCreate(
             ['kimeru' => 'Muuga'],
-            ['english' => 'How are you?', 'notes' => 'Source: Wikipedia sample phrases. To be checked with a fluent speaker.'],
+            ['english' => 'How are you?', 'notes' => 'Source: Wikipedia samples.'],
         );
     }
 }
